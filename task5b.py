@@ -1,20 +1,34 @@
-import numpy as np
 import pandas as pd
-dataset = pd.read_csv('C:/mllab/50_Startups.csv')
-X = dataset.iloc[:, :-1]
-y = dataset.iloc[:, 4]
-states=pd.get_dummies(X['State'])
-X=X.drop('State',axis=1)
-X=pd.concat([X,states],axis=1)
+import numpy as np
+
+
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state =0)
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error
-regressor = LinearRegression()
-regressor.fit(X_train, y_train)
-y_pred = regressor.predict(X_test)
-from sklearn.metrics import r2_score
-score=r2_score(y_test,y_pred)
-print(score)
-print('mean_sqrd_error is==',mean_squared_error(y_test,y_pred))
-print('root_mean_squared error of is==',np.sqrt(mean_squared_error(y_test,y_pred)))
+from sklearn.metrics import r2_score, mean_squared_error
+
+# Read dataset
+df = pd.read_csv('C:/Users/divya/OneDrive/Desktop/Datasets/Datasets/50_Startups.csv')
+
+# Convert categorical State column into numbers
+df = pd.get_dummies(df, columns=['State'], dtype=int)
+
+# Separate inputs and output
+X = df.drop('Profit', axis=1)
+y = df['Profit']
+
+# Split the dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=0
+)
+
+# Train the model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Predict results
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+print("R2 Score:", r2_score(y_test, y_pred))
+print("MSE:", mean_squared_error(y_test, y_pred))
+print("RMSE:", np.sqrt(mean_squared_error(y_test, y_pred)))

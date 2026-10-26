@@ -1,24 +1,45 @@
-import numpy as np
 import pandas as pd
 from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
-play_tennis = pd.read_csv("C:\\mllab\\PlayTennis.csv")
-print(play_tennis.head())
-number = LabelEncoder()
-play_tennis['Outlook'] = number.fit_transform(play_tennis['Outlook'])
-play_tennis['Temperature'] = number.fit_transform(play_tennis['Temperature'])
-play_tennis['Humidity'] = number.fit_transform(play_tennis['Humidity'])
-play_tennis['Wind'] = number.fit_transform(play_tennis['Wind'])
-play_tennis['Play Tennis'] = number.fit_transform(play_tennis['Play Tennis'])
-features = ["Outlook", "Temperature", "Humidity", "Wind"]
-target = "Play Tennis"
-print(play_tennis.head())
 from sklearn.model_selection import train_test_split
-features_train, features_test, target_train, target_test = train_test_split(play_tennis[features],play_tennis[target],test_size = 0.33,random_state = 54)
+
+# Load dataset
+data = pd.read_csv(
+    r'C:/Users/divya/OneDrive/Desktop/Datasets/Datasets/PlayTennis.csv'
+)
+
+print(data.head())
+
+# Convert categorical values into numbers
+encoder = LabelEncoder()
+
+for col in data.columns:
+    data[col] = encoder.fit_transform(data[col])
+
+print(data.head())
+
+# Select features and target
+features = ['Outlook', 'Temperature', 'Humidity', 'Wind']
+target = 'Play Tennis'
+
+X = data[features]
+y = data[target]
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.33, random_state=54
+)
+
+# Train Gaussian Naive Bayes model
 model = GaussianNB()
-model.fit(features_train, target_train)
-pred = model.predict(features_test)
-accuracy = accuracy_score(target_test, pred)
-print(accuracy)
-print(model.predict([[2,1,0,1]]))
+model.fit(X_train, y_train)
+
+# Predict test results
+pred = model.predict(X_test)
+
+# Calculate accuracy
+print("Accuracy:", accuracy_score(y_test, pred))
+
+# Predict for a new example
+print("Prediction:", model.predict([[2, 1, 0, 1]]))
